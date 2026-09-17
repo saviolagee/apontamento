@@ -68,6 +68,7 @@ export type Database = {
           can_view_costs: boolean;
           invited_by: string | null;
           accepted_at: string | null;
+          employee_id: string | null;
           created_at: string;
         };
         Insert: {
@@ -76,13 +77,200 @@ export type Database = {
           full_name: string;
           role?: AppRole;
           can_view_costs?: boolean;
+          employee_id?: string | null;
         };
         Update: never;
         Relationships: [];
       };
+      areas: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          name: string;
+          description: string | null;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: { tenant_id: string; name: string; description?: string | null; active?: boolean };
+        Update: { name?: string; description?: string | null; active?: boolean };
+        Relationships: [];
+      };
+      activities: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          area_id: string | null;
+          name: string;
+          billable: boolean;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: { tenant_id: string; area_id?: string | null; name: string; billable?: boolean; active?: boolean };
+        Update: { area_id?: string | null; name?: string; billable?: boolean; active?: boolean };
+        Relationships: [
+          {
+            foreignKeyName: "activities_area_id_fkey";
+            columns: ["area_id"];
+            isOneToOne: false;
+            referencedRelation: "areas";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      employees: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          profile_id: string | null;
+          full_name: string;
+          email: string | null;
+          job_title: string | null;
+          monthly_hours: number | null;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          full_name: string;
+          email?: string | null;
+          job_title?: string | null;
+          monthly_hours?: number | null;
+          active?: boolean;
+        };
+        Update: {
+          full_name?: string;
+          email?: string | null;
+          job_title?: string | null;
+          monthly_hours?: number | null;
+          active?: boolean;
+        };
+        Relationships: [];
+      };
+      employee_areas: {
+        Row: { employee_id: string; area_id: string; tenant_id: string };
+        Insert: { employee_id: string; area_id: string; tenant_id: string };
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "employee_areas_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employee_areas_area_id_fkey";
+            columns: ["area_id"];
+            isOneToOne: false;
+            referencedRelation: "areas";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      employee_costs: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          employee_id: string;
+          monthly_salary: number;
+          charges_percent: number;
+          charges_amount: number;
+          benefits: number;
+          monthly_hours: number;
+          valid_from: string;
+          valid_to: string | null;
+          hourly_cost: number;
+          created_at: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "employee_costs_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      clients: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          legal_name: string;
+          trade_name: string | null;
+          cnpj: string | null;
+          contact_name: string | null;
+          email: string | null;
+          phone: string | null;
+          notes: string | null;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          legal_name: string;
+          trade_name?: string | null;
+          cnpj?: string | null;
+          contact_name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          notes?: string | null;
+          active?: boolean;
+        };
+        Update: {
+          legal_name?: string;
+          trade_name?: string | null;
+          cnpj?: string | null;
+          contact_name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          notes?: string | null;
+          active?: boolean;
+        };
+        Relationships: [];
+      };
+      client_areas: {
+        Row: { client_id: string; area_id: string; tenant_id: string };
+        Insert: { client_id: string; area_id: string; tenant_id: string };
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "client_areas_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "client_areas_area_id_fkey";
+            columns: ["area_id"];
+            isOneToOne: false;
+            referencedRelation: "areas";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: { [_ in never]: never };
     Functions: {
+      set_employee_cost: {
+        Args: {
+          p_employee_id: string;
+          p_monthly_salary: number;
+          p_charges_percent: number;
+          p_charges_amount: number;
+          p_benefits: number;
+          p_monthly_hours: number;
+          p_valid_from: string;
+        };
+        Returns: string;
+      };
       create_tenant: {
         Args: { p_name: string; p_cnpj: string | null; p_full_name: string };
         Returns: string;
