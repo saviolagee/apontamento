@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
+import { resolvePeriod } from "@/lib/periods";
+import { PeriodFilter } from "../../dashboard/period-filter";
+import { ContractProfitability } from "./contract-profitability";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth/session";
@@ -14,8 +19,14 @@ import { ContractLinksForm, ExpensesCard } from "./contract-detail";
 
 export const metadata = { title: "Contrato | Apontamento" };
 
-export default async function ContractPage({ params }: PageProps<"/contratos/[id]">) {
+export default async function ContractPage({ params, searchParams }: PageProps<"/contratos/[id]">) {
   const { id } = await params;
+  const query = await searchParams;
+  const period = resolvePeriod(todayISO(), {
+    periodo: typeof query.periodo === "string" ? query.periodo : undefined,
+    de: typeof query.de === "string" ? query.de : undefined,
+    ate: typeof query.ate === "string" ? query.ate : undefined,
+  });
   await requireRole(["admin", "gestor"]);
   const supabase = await createClient();
 
@@ -118,6 +129,12 @@ export default async function ContractPage({ params }: PageProps<"/contratos/[id
           </CardHeader>
         </Card>
       </div>
+
+      <PeriodFilter preset={period.preset} from={period.from} to={period.to} />
+
+      <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+        <ContractProfitability contractId={contract.id} period={period} />
+      </Suspense>
 
       <Card>
         <CardHeader>

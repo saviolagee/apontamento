@@ -128,3 +128,23 @@
     @apply font-sans;
   }
 }
+/* Paleta dos gráficos (validada para daltonismo em ambos os modos).
+   Definida por papel para trocar claro/escuro em um lugar só. */
+:root {
+  --viz-1: #2a78d6; /* azul */
+  --viz-2: #eb6834; /* laranja */
+  --viz-3: #1baf7a; /* verde-água */
+  --viz-good: #0ca30c;
+  --viz-warning: #fab219;
+  --viz-critical: #d03b3b;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #898781;
+}
+
+.dark {
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+  --viz-3: #199e70;
+  --viz-grid: #2c2c2a;
+  --viz-axis: #898781;
+}

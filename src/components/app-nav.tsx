@@ -33,7 +33,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { href: "/inicio", label: "Início", icon: LayoutDashboardIcon, roles: ["admin", "gestor", "colaborador"] },
       { href: "/apontamentos", label: "Apontamentos", icon: ClockIcon, roles: ["admin", "gestor", "colaborador"] },
       { href: "/aprovacoes", label: "Aprovações", icon: CheckCheckIcon, roles: ["admin", "gestor"] },
-      { href: "/dashboard", label: "Rentabilidade", icon: BarChart3Icon, roles: ["admin", "gestor"], soon: true },
+      { href: "/dashboard", label: "Rentabilidade", icon: BarChart3Icon, roles: ["admin", "gestor"] },
     ],
   },
   {

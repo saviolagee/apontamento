@@ -493,6 +493,44 @@ export type Database = {
       };
     };
     Functions: {
+      contract_area_hours: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          contract_id: string;
+          area_id: string | null;
+          area_name: string;
+          hours: number;
+          billable_hours: number;
+          labor_cost: number;
+        }[];
+      };
+      activity_metrics: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          activity_id: string;
+          activity_name: string;
+          area_name: string;
+          billable: boolean;
+          hours: number;
+          labor_cost: number;
+          entries_count: number;
+        }[];
+      };
+      employee_client_cost: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          employee_id: string;
+          employee_name: string;
+          client_id: string;
+          client_name: string;
+          hours: number;
+          labor_cost: number;
+        }[];
+      };
+      employees_missing_cost: {
+        Args: Record<PropertyKey, never>;
+        Returns: { employee_id: string; employee_name: string; hours_last_90_days: number }[];
+      };
       contract_metrics: {
         Args: { p_from: string; p_to: string };
         Returns: {
