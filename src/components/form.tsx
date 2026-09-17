@@ -7,20 +7,10 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { ActionState } from "@/lib/actions";
 
-export function SubmitButton({
-  children,
-  className,
-  variant,
-  size,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  variant?: React.ComponentProps<typeof Button>["variant"];
-  size?: React.ComponentProps<typeof Button>["size"];
-}) {
+export function SubmitButton({ children, ...props }: React.ComponentProps<typeof Button>) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className={className} variant={variant} size={size}>
+    <Button type="submit" disabled={pending} {...props}>
       {pending ? <Loader2Icon className="animate-spin" /> : null}
       {children}
     </Button>

@@ -10,6 +10,7 @@ export type ContractPeriodicity = "mensal" | "bimestral" | "trimestral" | "semes
 export type ContractStatus = "ativo" | "pausado" | "encerrado";
 export type ExpenseCategory = "deslocamento" | "software" | "terceirizado" | "impostos" | "outros";
 export type ExpenseRecurrence = "pontual" | "mensal" | "bimestral" | "trimestral" | "semestral" | "anual";
+export type TimeEntryStatus = "pendente" | "aprovado" | "rejeitado";
 
 export type Database = {
   __InternalSupabase: {
@@ -399,6 +400,83 @@ export type Database = {
           },
         ];
       };
+      time_entries: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          employee_id: string;
+          contract_id: string | null;
+          activity_id: string;
+          entry_date: string;
+          start_time: string | null;
+          end_time: string | null;
+          minutes: number;
+          description: string | null;
+          billable: boolean;
+          cost_per_hour: number | null;
+          cost_amount: number;
+          status: TimeEntryStatus;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          review_comment: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          employee_id: string;
+          contract_id?: string | null;
+          activity_id: string;
+          entry_date: string;
+          start_time?: string | null;
+          end_time?: string | null;
+          minutes: number;
+          description?: string | null;
+        };
+        Update: {
+          contract_id?: string | null;
+          activity_id?: string;
+          entry_date?: string;
+          start_time?: string | null;
+          end_time?: string | null;
+          minutes?: number;
+          description?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "time_entries_activity_id_fkey";
+            columns: ["activity_id"];
+            isOneToOne: false;
+            referencedRelation: "activities";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "time_entries_contract_id_fkey";
+            columns: ["contract_id"];
+            isOneToOne: false;
+            referencedRelation: "contracts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      period_locks: {
+        Row: {
+          tenant_id: string;
+          locked_through: string | null;
+          updated_by: string | null;
+          updated_at: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: {
       contract_options: {
@@ -415,6 +493,14 @@ export type Database = {
       };
     };
     Functions: {
+      review_time_entries: {
+        Args: { p_ids: string[]; p_status: TimeEntryStatus; p_comment?: string | null };
+        Returns: number;
+      };
+      set_period_lock: {
+        Args: { p_locked_through: string | null };
+        Returns: undefined;
+      };
       set_employee_cost: {
         Args: {
           p_employee_id: string;
@@ -446,6 +532,7 @@ export type Database = {
       contract_status: ContractStatus;
       expense_category: ExpenseCategory;
       expense_recurrence: ExpenseRecurrence;
+      time_entry_status: TimeEntryStatus;
     };
     CompositeTypes: { [_ in never]: never };
   };

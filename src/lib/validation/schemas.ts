@@ -225,6 +225,49 @@ export const expenseSchema = z
     path: ["endDate"],
   });
 
+const optionalTimeSchema = z
+  .string()
+  .trim()
+  .transform((v) => (v === "" ? null : v))
+  .refine((v) => v === null || /^\d{2}:\d{2}(:\d{2})?$/.test(v), "Informe um horário válido.");
+
+export const timeEntrySchema = z
+  .object({
+    contractId: z
+      .string()
+      .trim()
+      .transform((v) => (v === "" ? null : v))
+      .refine((v) => v === null || z.uuid().safeParse(v).success, "Contrato inválido."),
+    activityId: z.uuid("Escolha uma atividade."),
+    entryDate: dateSchema,
+    startTime: optionalTimeSchema,
+    endTime: optionalTimeSchema,
+    duration: z.string().trim(),
+    description: optionalText(500),
+  })
+  .refine((d) => (d.startTime === null) === (d.endTime === null), {
+    message: "Informe início e fim, ou deixe os dois vazios.",
+    path: ["endTime"],
+  })
+  .refine((d) => d.startTime !== null || d.duration !== "", {
+    message: "Informe a duração ou o intervalo de horas.",
+    path: ["duration"],
+  });
+
+export const reviewSchema = z.object({
+  ids: z.array(z.uuid()).min(1, "Selecione ao menos um apontamento."),
+  status: z.enum(["aprovado", "rejeitado"]),
+  comment: optionalText(500),
+});
+
+export const periodLockSchema = z.object({
+  lockedThrough: z
+    .string()
+    .trim()
+    .transform((v) => (v === "" ? null : v))
+    .refine((v) => v === null || /^\d{4}-\d{2}-\d{2}$/.test(v), "Informe uma data válida."),
+});
+
 export const updateMemberSchema = z.object({
   profileId: z.uuid(),
   role: roleSchema,

@@ -9,6 +9,8 @@ export type AppContext = {
   user: User;
   profile: Tables<"profiles">;
   tenant: Tables<"tenants">;
+  /** Cadastro de colaborador vinculado ao login (quem aponta horas). */
+  employeeId: string | null;
 };
 
 export const getUser = cache(async (): Promise<User | null> => {
@@ -25,15 +27,18 @@ export const getAppContext = cache(async (): Promise<AppContext | null> => {
   if (!user) return null;
 
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*, tenants(*)")
-    .eq("id", user.id)
-    .maybeSingle<Tables<"profiles"> & { tenants: Tables<"tenants"> }>();
+  const [{ data }, { data: employee }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("*, tenants(*)")
+      .eq("id", user.id)
+      .maybeSingle<Tables<"profiles"> & { tenants: Tables<"tenants"> }>(),
+    supabase.from("employees").select("id").eq("profile_id", user.id).maybeSingle(),
+  ]);
 
   if (!data || !data.tenants) return null;
   const { tenants, ...profile } = data;
-  return { user, profile, tenant: tenants };
+  return { user, profile, tenant: tenants, employeeId: employee?.id ?? null };
 });
 
 /** Exige usuário autenticado e vinculado a uma empresa ativa. */

@@ -16,12 +16,15 @@ Recharts · Zod · Vitest (com Postgres real via PGlite para testar as política
 2. Copie `.env.example` para `.env.local` e preencha:
    - `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API)
    - `SUPABASE_SERVICE_ROLE_KEY` (usada só no servidor, para enviar convites por e-mail)
-3. Aplique as migrations no projeto:
+3. Aplique as migrations. Basta a `SUPABASE_DB_URL` no `.env.local`:
    ```bash
-   npx supabase login
-   npx supabase link --project-ref SEU_PROJECT_REF
-   npm run db:push
+   npm run db:apply
    ```
+   - `npm run db:apply -- --dry-run` mostra o que falta sem executar.
+   - `npm run db:apply -- --baseline 20260917000003` registra migrations já aplicadas
+     à mão (pelo SQL Editor) sem tentar executá-las de novo.
+   - Alternativa oficial: `npx supabase login`, `npx supabase link --project-ref ...`
+     e `npm run db:push`.
 4. Suba o app:
    ```bash
    npm run dev
@@ -41,7 +44,9 @@ Recharts · Zod · Vitest (com Postgres real via PGlite para testar as política
 | `npm run typecheck` | TypeScript |
 | `npm test` | testes unitários + testes de banco/RLS |
 | `npm run check` | lint + typecheck + testes |
-| `npm run db:push` | aplica as migrations no projeto vinculado |
+| `npm run db:apply` | aplica as migrations usando `SUPABASE_DB_URL` |
+| `npm run db:push` | aplica as migrations pela CLI oficial (projeto vinculado) |
+| `npm run db:bundle` | junta as migrations em `supabase/schema-completo.sql` |
 | `npm run db:types` | regenera `src/lib/database.types.ts` a partir do banco |
 
 ## Perfis de acesso

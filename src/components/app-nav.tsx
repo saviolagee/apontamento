@@ -6,10 +6,12 @@ import {
   BarChart3Icon,
   BriefcaseIcon,
   Building2Icon,
+  CheckCheckIcon,
   ClockIcon,
   LayersIcon,
   LayoutDashboardIcon,
   ListChecksIcon,
+  LockIcon,
   UsersIcon,
   UserCogIcon,
 } from "lucide-react";
@@ -29,7 +31,8 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Operação",
     items: [
       { href: "/inicio", label: "Início", icon: LayoutDashboardIcon, roles: ["admin", "gestor", "colaborador"] },
-      { href: "/apontamentos", label: "Apontamentos", icon: ClockIcon, roles: ["admin", "gestor", "colaborador"], soon: true },
+      { href: "/apontamentos", label: "Apontamentos", icon: ClockIcon, roles: ["admin", "gestor", "colaborador"] },
+      { href: "/aprovacoes", label: "Aprovações", icon: CheckCheckIcon, roles: ["admin", "gestor"] },
       { href: "/dashboard", label: "Rentabilidade", icon: BarChart3Icon, roles: ["admin", "gestor"], soon: true },
     ],
   },
@@ -46,6 +49,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
     group: "Configurações",
     items: [
       { href: "/configuracoes/empresa", label: "Empresa", icon: Building2Icon, roles: ["admin"] },
+      { href: "/configuracoes/fechamento", label: "Fechamento de período", icon: LockIcon, roles: ["admin"] },
       { href: "/configuracoes/usuarios", label: "Usuários e acessos", icon: UserCogIcon, roles: ["admin"] },
     ],
   },
