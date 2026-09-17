@@ -493,6 +493,73 @@ export type Database = {
       };
     };
     Functions: {
+      contract_metrics: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          contract_id: string;
+          contract_name: string;
+          client_id: string;
+          client_name: string;
+          periodicity: ContractPeriodicity;
+          contract_status: ContractStatus;
+          amount: number;
+          desired_margin: number;
+          tax_rate: number;
+          expected_hours: number | null;
+          start_date: string;
+          end_date: string | null;
+          revenue: number;
+          hours: number;
+          billable_hours: number;
+          labor_cost: number;
+          expense_cost: number;
+          team_cost_per_hour: number | null;
+          entries_count: number;
+        }[];
+      };
+      contract_hours_breakdown: {
+        Args: { p_contract_id: string; p_from: string; p_to: string };
+        Returns: {
+          employee_id: string;
+          employee_name: string;
+          activity_id: string;
+          activity_name: string;
+          area_id: string | null;
+          area_name: string | null;
+          billable: boolean;
+          hours: number;
+          labor_cost: number;
+        }[];
+      };
+      employee_metrics: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          employee_id: string;
+          employee_name: string;
+          active: boolean;
+          available_hours: number;
+          hours: number;
+          billable_hours: number;
+          labor_cost: number;
+          entries_count: number;
+          last_entry_date: string | null;
+        }[];
+      };
+      my_hours_breakdown: {
+        Args: { p_from: string; p_to: string };
+        Returns: {
+          entry_date: string;
+          contract_id: string | null;
+          contract_name: string | null;
+          client_name: string | null;
+          activity_id: string;
+          activity_name: string;
+          area_id: string | null;
+          area_name: string | null;
+          billable: boolean;
+          hours: number;
+        }[];
+      };
       review_time_entries: {
         Args: { p_ids: string[]; p_status: TimeEntryStatus; p_comment?: string | null };
         Returns: number;
