@@ -64,17 +64,25 @@ export function resolvePeriod(
       const from = shiftMonth(startOfMonth(today), -1);
       return { from, to: endOfMonth(from), preset, label: monthLabel(from) };
     }
+    // Períodos em andamento terminam hoje: receita e custo ficam na mesma
+    // régua (a receita é normalizada pelos dias), e a projeção cuida do resto.
     case "trimestre": {
       const from = shiftMonth(startOfMonth(today), -2);
-      return { from, to: endOfMonth(today), preset, label: `${monthLabel(from)} até ${monthLabel(today)}` };
+      return { from, to: today, preset, label: `${monthLabel(from)} até hoje` };
     }
     case "ano": {
       const year = today.slice(0, 4);
-      return { from: `${year}-01-01`, to: `${year}-12-31`, preset, label: `Ano de ${year}` };
+      return { from: `${year}-01-01`, to: today, preset, label: `Ano de ${year} até hoje` };
     }
     default: {
       const from = startOfMonth(today);
-      return { from, to: endOfMonth(today), preset: "mes-atual", label: monthLabel(today) };
+      const isClosed = today >= endOfMonth(today);
+      return {
+        from,
+        to: isClosed ? endOfMonth(today) : today,
+        preset: "mes-atual",
+        label: isClosed ? monthLabel(today) : `${monthLabel(today)} (até hoje)`,
+      };
     }
   }
 }

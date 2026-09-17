@@ -4,8 +4,21 @@ import { monthsInRange, resolvePeriod, shiftMonth } from "./periods";
 describe("períodos", () => {
   const today = "2026-09-17";
 
-  it("mês atual", () => {
-    expect(resolvePeriod(today)).toMatchObject({ from: "2026-09-01", to: "2026-09-30", preset: "mes-atual" });
+  it("mês atual vai só até hoje, para custo e receita ficarem comparáveis", () => {
+    expect(resolvePeriod(today)).toMatchObject({
+      from: "2026-09-01",
+      to: today,
+      preset: "mes-atual",
+      label: "setembro de 2026 (até hoje)",
+    });
+  });
+
+  it("no último dia do mês, o mês atual fecha completo", () => {
+    expect(resolvePeriod("2026-09-30")).toMatchObject({
+      from: "2026-09-01",
+      to: "2026-09-30",
+      label: "setembro de 2026",
+    });
   });
 
   it("mês anterior", () => {
@@ -17,11 +30,11 @@ describe("períodos", () => {
   });
 
   it("últimos três meses", () => {
-    expect(resolvePeriod(today, { periodo: "trimestre" })).toMatchObject({ from: "2026-07-01", to: "2026-09-30" });
+    expect(resolvePeriod(today, { periodo: "trimestre" })).toMatchObject({ from: "2026-07-01", to: today });
   });
 
   it("ano atual", () => {
-    expect(resolvePeriod(today, { periodo: "ano" })).toMatchObject({ from: "2026-01-01", to: "2026-12-31" });
+    expect(resolvePeriod(today, { periodo: "ano" })).toMatchObject({ from: "2026-01-01", to: today });
   });
 
   it("personalizado exige as duas datas", () => {

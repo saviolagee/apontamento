@@ -22,7 +22,7 @@ const SUPABASE_BOOTSTRAP = `
     created_at timestamptz default now()
   );
   create function auth.uid() returns uuid language sql stable as $$
-    select nullif(current_setting('request.jwt.claims', true)::jsonb ->> 'sub', '')::uuid
+    select nullif(nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub', '')::uuid
   $$;
   grant usage on schema auth to anon, authenticated, service_role;
 

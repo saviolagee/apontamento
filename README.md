@@ -47,6 +47,7 @@ Recharts · Zod · Vitest (com Postgres real via PGlite para testar as política
 | `npm run db:apply` | aplica as migrations usando `SUPABASE_DB_URL` |
 | `npm run db:push` | aplica as migrations pela CLI oficial (projeto vinculado) |
 | `npm run db:bundle` | junta as migrations em `supabase/schema-completo.sql` |
+| `npm run seed -- --email voce@empresa.com` | popula a base de demonstração (`--reset` apaga antes) |
 | `npm run db:types` | regenera `src/lib/database.types.ts` a partir do banco |
 
 ## Perfis de acesso
@@ -81,4 +82,4 @@ src/lib/validation    schemas Zod e validadores (CNPJ)
 - [x] 6. Dashboard gerencial, detalhe do contrato e alertas
 - [x] 7. Análises do colaborador
 - [x] 8. Exportações em CSV, Excel e PDF
-- [ ] 9. Seed de demonstração
+- [x] 9. Seed de demonstração
