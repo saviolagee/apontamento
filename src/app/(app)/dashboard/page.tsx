@@ -7,6 +7,7 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 import { EmptyState, PageHeader } from "@/components/page-header";
+import { ExportMenu } from "@/components/export-menu";
 import { StatusBadge } from "@/components/status-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth/session";
@@ -160,7 +161,13 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
   return (
     <div className="grid gap-6">
-      <PageHeader title="Rentabilidade" description={`${period.label} · ${report.contracts.length} contrato(s)`} />
+      <PageHeader title="Rentabilidade" description={`${period.label} · ${report.contracts.length} contrato(s)`}>
+        <div className="flex flex-wrap gap-2">
+          <ExportMenu dataset="rentabilidade" label="Exportar rentabilidade" />
+          <ExportMenu dataset="apontamentos" label="Apontamentos" scope="todos" />
+          <ExportMenu dataset="equipe" label="Equipe" />
+        </div>
+      </PageHeader>
 
       <PeriodFilter preset={period.preset} from={period.from} to={period.to} />
 

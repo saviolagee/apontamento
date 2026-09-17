@@ -1,4 +1,5 @@
 import { EmptyState, PageHeader } from "@/components/page-header";
+import { ExportMenu } from "@/components/export-menu";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -37,7 +38,9 @@ export default async function ApprovalsPage() {
       <PageHeader
         title="Aprovações"
         description="Apontamentos pendentes de revisão. Aprovar ou rejeitar não altera as horas lançadas."
-      />
+      >
+        <ExportMenu dataset="apontamentos" label="Exportar apontamentos" scope="todos" />
+      </PageHeader>
 
       <Card>
         <CardHeader>

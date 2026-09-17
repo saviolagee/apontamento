@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarX2Icon } from "lucide-react";
 import { EmptyState, PageHeader } from "@/components/page-header";
+import { ExportMenu } from "@/components/export-menu";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -89,7 +90,9 @@ export default async function MyAnalyticsPage({ searchParams }: PageProps<"/minh
       <PageHeader
         title="Minhas análises"
         description={`${profile.full_name.split(" ")[0]}, aqui está o seu ${period.label.toLowerCase()}.`}
-      />
+      >
+        <ExportMenu dataset="apontamentos" label="Exportar minhas horas" scope="meus" />
+      </PageHeader>
 
       <PeriodFilter preset={period.preset} from={period.from} to={period.to} />
 

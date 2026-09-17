@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
+import { ExportMenu } from "@/components/export-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { resolvePeriod } from "@/lib/periods";
 import { PeriodFilter } from "../../dashboard/period-filter";
@@ -80,6 +81,8 @@ export default async function ContractPage({ params, searchParams }: PageProps<"
 
       <PageHeader title={contract.name} description={contract.description ?? undefined}>
         <div className="flex flex-wrap items-center gap-2">
+          <ExportMenu dataset="gastos" label="Gastos" />
+          <ExportMenu dataset="rentabilidade" label="Rentabilidade" />
           <Badge variant="secondary">{PERIODICITY_LABELS[contract.periodicity]}</Badge>
           <Badge variant={contract.status === "ativo" ? "default" : "secondary"}>
             {CONTRACT_STATUS_LABELS[contract.status]}
