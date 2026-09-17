@@ -79,6 +79,6 @@ src/lib/validation    schemas Zod e validadores (CNPJ)
 - [x] 4. Apontamento de horas (manual, cronômetro, visão semanal), aprovação e fechamento
 - [ ] 5. Motor de cálculo de rentabilidade com testes
 - [x] 6. Dashboard gerencial, detalhe do contrato e alertas
-- [ ] 7. Análises do colaborador
+- [x] 7. Análises do colaborador
 - [ ] 8. Alertas e exportações
 - [ ] 9. Seed de demonstração

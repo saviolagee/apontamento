@@ -6,6 +6,7 @@ import {
   BarChart3Icon,
   BriefcaseIcon,
   Building2Icon,
+  ChartLineIcon,
   CheckCheckIcon,
   ClockIcon,
   LayersIcon,
@@ -32,6 +33,12 @@ const NAV: { group: string; items: NavItem[] }[] = [
     items: [
       { href: "/inicio", label: "Início", icon: LayoutDashboardIcon, roles: ["admin", "gestor", "colaborador"] },
       { href: "/apontamentos", label: "Apontamentos", icon: ClockIcon, roles: ["admin", "gestor", "colaborador"] },
+      {
+        href: "/minhas-analises",
+        label: "Minhas análises",
+        icon: ChartLineIcon,
+        roles: ["admin", "gestor", "colaborador"],
+      },
       { href: "/aprovacoes", label: "Aprovações", icon: CheckCheckIcon, roles: ["admin", "gestor"] },
       { href: "/dashboard", label: "Rentabilidade", icon: BarChart3Icon, roles: ["admin", "gestor"] },
     ],
