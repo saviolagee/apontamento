@@ -161,6 +161,70 @@ export const clientSchema = z.object({
   active: checkboxSchema,
 });
 
+export const periodicitySchema = z.enum(["mensal", "bimestral", "trimestral", "semestral", "anual", "projeto"]);
+export const contractStatusSchema = z.enum(["ativo", "pausado", "encerrado"]);
+export const expenseCategorySchema = z.enum(["deslocamento", "software", "terceirizado", "impostos", "outros"]);
+export const expenseRecurrenceSchema = z.enum([
+  "pontual",
+  "mensal",
+  "bimestral",
+  "trimestral",
+  "semestral",
+  "anual",
+]);
+
+const optionalDateSchema = z
+  .string()
+  .trim()
+  .transform((v) => (v === "" ? null : v))
+  .refine((v) => v === null || /^\d{4}-\d{2}-\d{2}$/.test(v), "Informe uma data válida.");
+
+export const contractSchema = z
+  .object({
+    clientId: z.uuid(),
+    name: nameSchema,
+    description: optionalText(1000),
+    amount: decimalSchema.pipe(z.number().min(0, "Não pode ser negativo.")),
+    periodicity: periodicitySchema,
+    startDate: dateSchema,
+    endDate: optionalDateSchema,
+    desiredMargin: decimalSchema.pipe(
+      z.number().min(0, "Não pode ser negativa.").lt(100, "Deve ser menor que 100%."),
+    ),
+    taxRate: optionalDecimalSchema
+      .transform((v) => v ?? 0)
+      .pipe(z.number().min(0, "Não pode ser negativa.").max(100, "Máximo de 100%.")),
+    expectedHours: optionalDecimalSchema.refine((v) => v === null || v > 0, "Deve ser maior que zero."),
+    status: contractStatusSchema,
+  })
+  .refine((d) => d.periodicity !== "projeto" || d.endDate !== null, {
+    message: "Projeto fechado precisa de data de término.",
+    path: ["endDate"],
+  })
+  .refine((d) => d.endDate === null || d.endDate >= d.startDate, {
+    message: "O término não pode ser antes do início.",
+    path: ["endDate"],
+  });
+
+export const expenseSchema = z
+  .object({
+    contractId: z.uuid(),
+    description: z.string().trim().min(2, "Descreva o gasto.").max(200, "Máximo de 200 caracteres."),
+    category: expenseCategorySchema,
+    amount: decimalSchema.pipe(z.number().min(0, "Não pode ser negativo.")),
+    expenseDate: dateSchema,
+    recurrence: expenseRecurrenceSchema,
+    endDate: optionalDateSchema,
+  })
+  .refine((d) => d.recurrence !== "pontual" || d.endDate === null, {
+    message: "Gasto pontual não tem fim de recorrência.",
+    path: ["endDate"],
+  })
+  .refine((d) => d.endDate === null || d.endDate >= d.expenseDate, {
+    message: "O fim não pode ser antes do início.",
+    path: ["endDate"],
+  });
+
 export const updateMemberSchema = z.object({
   profileId: z.uuid(),
   role: roleSchema,

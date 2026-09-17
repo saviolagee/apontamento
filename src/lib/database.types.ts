@@ -6,6 +6,11 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 
 export type AppRole = "admin" | "gestor" | "colaborador";
 
+export type ContractPeriodicity = "mensal" | "bimestral" | "trimestral" | "semestral" | "anual" | "projeto";
+export type ContractStatus = "ativo" | "pausado" | "encerrado";
+export type ExpenseCategory = "deslocamento" | "software" | "terceirizado" | "impostos" | "outros";
+export type ExpenseRecurrence = "pontual" | "mensal" | "bimestral" | "trimestral" | "semestral" | "anual";
+
 export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "12";
@@ -256,8 +261,159 @@ export type Database = {
           },
         ];
       };
+      contracts: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          client_id: string;
+          name: string;
+          description: string | null;
+          amount: number;
+          periodicity: ContractPeriodicity;
+          start_date: string;
+          end_date: string | null;
+          desired_margin: number;
+          tax_rate: number;
+          expected_hours: number | null;
+          status: ContractStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          client_id: string;
+          name: string;
+          description?: string | null;
+          amount: number;
+          periodicity?: ContractPeriodicity;
+          start_date: string;
+          end_date?: string | null;
+          desired_margin?: number;
+          tax_rate?: number;
+          expected_hours?: number | null;
+          status?: ContractStatus;
+        };
+        Update: {
+          name?: string;
+          description?: string | null;
+          amount?: number;
+          periodicity?: ContractPeriodicity;
+          start_date?: string;
+          end_date?: string | null;
+          desired_margin?: number;
+          tax_rate?: number;
+          expected_hours?: number | null;
+          status?: ContractStatus;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contracts_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      contract_areas: {
+        Row: { contract_id: string; area_id: string; tenant_id: string };
+        Insert: { contract_id: string; area_id: string; tenant_id: string };
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "contract_areas_area_id_fkey";
+            columns: ["area_id"];
+            isOneToOne: false;
+            referencedRelation: "areas";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      contract_activities: {
+        Row: { contract_id: string; activity_id: string; tenant_id: string };
+        Insert: { contract_id: string; activity_id: string; tenant_id: string };
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "contract_activities_activity_id_fkey";
+            columns: ["activity_id"];
+            isOneToOne: false;
+            referencedRelation: "activities";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      contract_members: {
+        Row: { contract_id: string; employee_id: string; tenant_id: string };
+        Insert: { contract_id: string; employee_id: string; tenant_id: string };
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: "contract_members_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      contract_expenses: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          contract_id: string;
+          description: string;
+          category: ExpenseCategory;
+          amount: number;
+          expense_date: string;
+          recurrence: ExpenseRecurrence;
+          end_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          tenant_id: string;
+          contract_id: string;
+          description: string;
+          category?: ExpenseCategory;
+          amount: number;
+          expense_date: string;
+          recurrence?: ExpenseRecurrence;
+          end_date?: string | null;
+        };
+        Update: {
+          description?: string;
+          category?: ExpenseCategory;
+          amount?: number;
+          expense_date?: string;
+          recurrence?: ExpenseRecurrence;
+          end_date?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contract_expenses_contract_id_fkey";
+            columns: ["contract_id"];
+            isOneToOne: false;
+            referencedRelation: "contracts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
-    Views: { [_ in never]: never };
+    Views: {
+      contract_options: {
+        Row: {
+          id: string;
+          tenant_id: string;
+          client_id: string;
+          name: string;
+          status: ContractStatus;
+          start_date: string;
+          end_date: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       set_employee_cost: {
         Args: {
@@ -284,7 +440,13 @@ export type Database = {
         Returns: undefined;
       };
     };
-    Enums: { app_role: AppRole };
+    Enums: {
+      app_role: AppRole;
+      contract_periodicity: ContractPeriodicity;
+      contract_status: ContractStatus;
+      expense_category: ExpenseCategory;
+      expense_recurrence: ExpenseRecurrence;
+    };
     CompositeTypes: { [_ in never]: never };
   };
 };

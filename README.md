@@ -69,8 +69,8 @@ src/lib/validation    schemas Zod e validadores (CNPJ)
 ## Roadmap
 
 - [x] 1. Setup, Supabase, autenticação, multiempresa e perfis/RLS
-- [ ] 2. Cadastros: áreas, atividades, colaboradores (com custo e vigência), clientes
-- [ ] 3. Contratos e gastos extras
+- [x] 2. Cadastros: áreas, atividades, colaboradores (com custo e vigência), clientes
+- [x] 3. Contratos e gastos extras
 - [ ] 4. Apontamento de horas (manual, cronômetro, timesheet) e aprovação
 - [ ] 5. Motor de cálculo de rentabilidade com testes
 - [ ] 6. Dashboard gerencial e detalhe do cliente
