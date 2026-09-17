@@ -15,7 +15,8 @@
     "check": "npm run lint && npm run typecheck && npm run test",
     "db:bundle": "node scripts/bundle-migrations.mjs",
     "db:apply": "node --env-file-if-exists=.env.local scripts/db-push.mjs",
-    "seed": "node --env-file-if-exists=.env.local scripts/seed.mjs"
+    "seed": "node --env-file-if-exists=.env.local scripts/seed.mjs",
+    "doctor": "node --env-file-if-exists=.env.local scripts/doctor.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
