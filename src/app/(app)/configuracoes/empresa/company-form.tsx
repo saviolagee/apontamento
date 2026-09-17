@@ -3,11 +3,54 @@
 import { useActionState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeCheckbox } from "@/components/native-select";
 import { Field, FormAlert, SubmitButton } from "@/components/form";
 import { initialActionState } from "@/lib/actions";
 import { formatCnpj } from "@/lib/format";
 import type { Tables } from "@/lib/database.types";
-import { updateTenantAction } from "./actions";
+import { updateTenantAction, updateTenantDomainAction } from "./actions";
+
+export function DomainForm({ tenant }: { tenant: Tables<"tenants"> }) {
+  const [state, formAction] = useActionState(updateTenantDomainAction, initialActionState);
+
+  return (
+    <form action={formAction} className="grid gap-4">
+      <FormAlert state={state} />
+      {!tenant.email_domain ? (
+        <p className="rounded-lg border border-[--viz-warning] bg-[color-mix(in_oklch,var(--viz-warning),transparent_88%)] px-3 py-2 text-sm">
+          Sua empresa ainda não tem domínio definido. Sem ele, ninguém entra automaticamente — só por convite.
+        </p>
+      ) : null}
+      <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+        <Field
+          label="Domínio corporativo"
+          htmlFor="emailDomain"
+          hint="Pode colar um e-mail da empresa: guardamos só o domínio."
+          errors={state.fieldErrors?.emailDomain}
+        >
+          <Input
+            id="emailDomain"
+            name="emailDomain"
+            defaultValue={tenant.email_domain ?? ""}
+            placeholder="suaempresa.com.br"
+            required
+          />
+        </Field>
+        <SubmitButton>Salvar domínio</SubmitButton>
+      </div>
+      <label className="flex items-start gap-2 text-sm">
+        <NativeCheckbox name="autoJoinDomain" defaultChecked={tenant.auto_join_domain} className="mt-0.5" />
+        <span>
+          Entrada automática
+          <span className="block text-xs text-muted-foreground">
+            Quem se cadastrar com um e-mail @{tenant.email_domain || "suaempresa.com.br"} entra como colaborador. Com a
+            opção desligada, só entra quem receber convite.
+          </span>
+        </span>
+      </label>
+    </form>
+  );
+}
 
 export function CompanyForm({ tenant }: { tenant: Tables<"tenants"> }) {
   const [state, formAction] = useActionState(updateTenantAction, initialActionState);

@@ -66,11 +66,11 @@ export default async function HomePage() {
           ))}
           {profile.role === "admin" ? (
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button render={<Link href="/configuracoes/empresa" />} variant="outline">
+              <Button nativeButton={false} render={<Link href="/configuracoes/empresa" />} variant="outline">
                 Configurar empresa
                 <ArrowRightIcon />
               </Button>
-              <Button render={<Link href="/configuracoes/usuarios" />}>
+              <Button nativeButton={false} render={<Link href="/configuracoes/usuarios" />}>
                 Convidar equipe
                 <ArrowRightIcon />
               </Button>

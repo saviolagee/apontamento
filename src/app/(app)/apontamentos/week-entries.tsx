@@ -162,13 +162,13 @@ export function WeekEntries({
           </CardDescription>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon-sm" render={<Link href={`/apontamentos?semana=${addDays(weekStart, -7)}`} />} aria-label="Semana anterior">
+          <Button variant="outline" size="icon-sm" nativeButton={false} render={<Link href={`/apontamentos?semana=${addDays(weekStart, -7)}`} />} aria-label="Semana anterior">
             <ChevronLeftIcon />
           </Button>
-          <Button variant="outline" size="sm" render={<Link href="/apontamentos" />}>
+          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/apontamentos" />}>
             Hoje
           </Button>
-          <Button variant="outline" size="icon-sm" render={<Link href={`/apontamentos?semana=${addDays(weekStart, 7)}`} />} aria-label="Próxima semana">
+          <Button variant="outline" size="icon-sm" nativeButton={false} render={<Link href={`/apontamentos?semana=${addDays(weekStart, 7)}`} />} aria-label="Próxima semana">
             <ChevronRightIcon />
           </Button>
         </div>

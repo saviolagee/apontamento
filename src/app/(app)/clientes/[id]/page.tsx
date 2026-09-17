@@ -76,7 +76,7 @@ export default async function ClientPage({ params }: PageProps<"/clientes/[id]">
             <CardTitle>Contratos</CardTitle>
             <CardDescription>Cada contrato tem sua própria margem desejada e gastos extras.</CardDescription>
           </div>
-          <Button render={<Link href={`/contratos/novo?cliente=${client.id}`} />} size="sm">
+          <Button nativeButton={false} render={<Link href={`/contratos/novo?cliente=${client.id}`} />} size="sm">
             <PlusIcon />
             Novo contrato
           </Button>

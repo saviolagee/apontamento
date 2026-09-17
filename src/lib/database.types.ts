@@ -27,6 +27,8 @@ export type Database = {
           monthly_hours: number;
           margin_attention_tolerance: number;
           timezone: string;
+          email_domain: string | null;
+          auto_join_domain: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -601,6 +603,10 @@ export type Database = {
       review_time_entries: {
         Args: { p_ids: string[]; p_status: TimeEntryStatus; p_comment?: string | null };
         Returns: number;
+      };
+      set_tenant_domain: {
+        Args: { p_domain: string; p_auto_join?: boolean };
+        Returns: undefined;
       };
       set_period_lock: {
         Args: { p_locked_through: string | null };

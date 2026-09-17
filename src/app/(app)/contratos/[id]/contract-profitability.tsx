@@ -184,7 +184,7 @@ export async function ContractProfitability({ contractId, period }: { contractId
             {byEmployee.size === 0 ? (
               <EmptyState>Sem horas no período.</EmptyState>
             ) : (
-              <BarList items={toItems(byEmployee)} formatValue={formatHours} />
+              <BarList items={toItems(byEmployee)} format="hours" />
             )}
           </CardContent>
         </Card>
@@ -196,7 +196,7 @@ export async function ContractProfitability({ contractId, period }: { contractId
             {byActivity.size === 0 ? (
               <EmptyState>Sem horas no período.</EmptyState>
             ) : (
-              <BarList items={toItems(byActivity)} formatValue={formatHours} />
+              <BarList items={toItems(byActivity)} format="hours" />
             )}
           </CardContent>
         </Card>
@@ -208,7 +208,7 @@ export async function ContractProfitability({ contractId, period }: { contractId
             {byArea.size === 0 ? (
               <EmptyState>Sem horas no período.</EmptyState>
             ) : (
-              <BarList items={toItems(byArea)} formatValue={formatHours} />
+              <BarList items={toItems(byArea)} format="hours" />
             )}
           </CardContent>
         </Card>

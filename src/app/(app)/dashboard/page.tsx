@@ -302,7 +302,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                   value: area.profit,
                   hint: `${formatHours(area.hours)} · margem ${area.margin === null ? "—" : formatPercent(area.margin)}`,
                 }))}
-                formatValue={formatCurrency}
+                format="currency"
               />
             )}
           </CardContent>
@@ -324,7 +324,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                   value: Number(a.labor_cost),
                   hint: `${formatHours(Number(a.hours))} · ${a.billable ? "faturável" : "não faturável"} · ${a.area_name}`,
                 }))}
-                formatValue={formatCurrency}
+                format="currency"
               />
             )}
           </CardContent>
@@ -355,7 +355,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                       : "sem apontamentos"
                   }`,
                 }))}
-                formatValue={(v) => formatPercent(v)}
+                format="percent"
               />
             )}
           </CardContent>
@@ -377,7 +377,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                   value: Number(e.labor_cost),
                   hint: formatHours(Number(e.hours)),
                 }))}
-                formatValue={formatCurrency}
+                format="currency"
               />
             )}
           </CardContent>
@@ -475,7 +475,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
                 value,
                 hint: totals.netRevenue > 0 ? formatPercent(value / totals.netRevenue) : undefined,
               }))}
-              formatValue={formatCurrency}
+              format="currency"
             />
           )}
         </CardContent>

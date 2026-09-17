@@ -16,7 +16,8 @@ export default function SignupPage() {
       <CardHeader>
         <CardTitle>Criar conta</CardTitle>
         <CardDescription>
-          Cadastre-se para criar sua empresa. Se você foi convidado, use o mesmo e-mail do convite.
+          Use seu <span className="font-medium text-foreground">e-mail corporativo</span>: é ele que liga você à
+          empresa certa. Se você foi convidado, use o mesmo e-mail do convite.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -14,7 +14,7 @@ import {
   YAxis,
   ZAxis,
 } from "recharts";
-import { formatCurrency, formatPercent } from "@/lib/format";
+import { formatCurrency, formatHours, formatNumber, formatPercent } from "@/lib/format";
 import type { MonthPoint } from "@/lib/server/metrics.types";
 import type { HealthStatus } from "@/lib/profitability";
 
@@ -221,14 +221,27 @@ export function RevenueMarginScatter({ data, targetPct }: { data: ScatterPoint[]
   );
 }
 
-/** Barras horizontais simples: legíveis sem legenda e sem depender de cor. */
+/**
+ * Barras horizontais simples: legíveis sem legenda e sem depender de cor.
+ * O formato vem como string (e não como função) porque este componente é
+ * renderizado a partir de Server Components — funções não atravessam essa
+ * fronteira.
+ */
 export function BarList({
   items,
-  formatValue,
+  format = "currency",
 }: {
   items: { id: string; label: string; value: number; hint?: string }[];
-  formatValue: (value: number) => string;
+  format?: "currency" | "hours" | "percent" | "number";
 }) {
+  const formatValue = (value: number) =>
+    format === "hours"
+      ? formatHours(value)
+      : format === "percent"
+        ? formatPercent(value)
+        : format === "number"
+          ? formatNumber(value)
+          : formatCurrency(value);
   const max = Math.max(...items.map((i) => Math.abs(i.value)), 1);
 
   return (

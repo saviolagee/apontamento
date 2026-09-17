@@ -157,7 +157,7 @@ export default async function MyAnalyticsPage({ searchParams }: PageProps<"/minh
                   value: d.hours,
                   hint: formatPercent(d.share),
                 }))}
-                formatValue={formatHours}
+                format="hours"
               />
             )}
           </CardContent>
@@ -178,7 +178,7 @@ export default async function MyAnalyticsPage({ searchParams }: PageProps<"/minh
                   value: d.hours,
                   hint: formatPercent(d.share),
                 }))}
-                formatValue={formatHours}
+                format="hours"
               />
             )}
           </CardContent>
@@ -199,7 +199,7 @@ export default async function MyAnalyticsPage({ searchParams }: PageProps<"/minh
                   value: d.hours,
                   hint: formatPercent(d.share),
                 }))}
-                formatValue={formatHours}
+                format="hours"
               />
             )}
           </CardContent>

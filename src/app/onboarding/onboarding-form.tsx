@@ -7,7 +7,7 @@ import { Field, FormAlert, SubmitButton } from "@/components/form";
 import { initialActionState } from "@/lib/actions";
 import { createTenantAction } from "./actions";
 
-export function OnboardingForm({ email }: { email: string }) {
+export function OnboardingForm({ email, domain }: { email: string; domain: string }) {
   const [state, formAction] = useActionState(createTenantAction, initialActionState);
 
   return (
@@ -19,6 +19,13 @@ export function OnboardingForm({ email }: { email: string }) {
           gestores e colaboradores depois.
         </CardDescription>
       </CardHeader>
+      <CardContent className="pb-0">
+        <p className="rounded-lg border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+          A empresa ficará vinculada ao domínio{" "}
+          <span className="font-medium text-foreground">@{domain}</span>. Quem se cadastrar com um e-mail desse
+          domínio entra automaticamente como colaborador — você pode desligar isso depois em Configurações.
+        </p>
+      </CardContent>
       <CardContent>
         <form action={formAction} className="grid gap-4">
           <FormAlert state={state} />

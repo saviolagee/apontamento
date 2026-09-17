@@ -1,9 +1,8 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { PauseIcon, PlayIcon, SquareIcon, TimerIcon } from "lucide-react";
+import { PauseIcon, PlayIcon, SquareIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Field, FormAlert, SubmitButton } from "@/components/form";
 import { initialActionState, type ActionState } from "@/lib/actions";
@@ -62,18 +61,8 @@ export function TimerCard({
   const minutes = Math.max(1, Math.round(seconds / 60));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TimerIcon className="size-4" />
-          Cronômetro
-        </CardTitle>
-        <CardDescription>
-          Continua contando se você fechar a página. Ao parar, o tempo vira um apontamento pendente.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <FormAlert state={state} />
+    <div className="grid gap-4">
+      <FormAlert state={state} />
         <div className="flex flex-wrap items-center gap-4">
           <span className="font-mono text-4xl tabular-nums" suppressHydrationWarning>
             {formatClock(seconds)}
@@ -135,7 +124,6 @@ export function TimerCard({
             </div>
           </Field>
         </form>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

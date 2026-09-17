@@ -1,6 +1,15 @@
 import { z } from "zod";
 import { onlyDigits } from "@/lib/format";
+import { isPublicEmailDomain, isValidDomain, normalizeDomain } from "@/lib/email-domain";
 import { isValidCnpj } from "./cnpj";
+
+/**
+ * Campo que pode não existir no formulário (input escondido por uma opção,
+ * checkbox desmarcado, etc). Em FormData "ausente" e "vazio" são a mesma
+ * coisa, então tratamos assim antes de validar.
+ */
+const fromForm = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((value) => (value === undefined || value === null ? "" : value), schema);
 
 export const emailSchema = z.email("Informe um e-mail válido.").trim().toLowerCase();
 
@@ -13,12 +22,14 @@ export const nameSchema = z
   .max(150, "Máximo de 150 caracteres.");
 
 /** CNPJ opcional: vazio → null; preenchido → só dígitos e válido. */
-export const optionalCnpjSchema = z
-  .string()
-  .trim()
-  .transform((v) => onlyDigits(v))
-  .refine((v) => v === "" || isValidCnpj(v), "CNPJ inválido.")
-  .transform((v) => (v === "" ? null : v));
+export const optionalCnpjSchema = fromForm(
+  z
+    .string()
+    .trim()
+    .transform((v) => onlyDigits(v))
+    .refine((v) => v === "" || isValidCnpj(v), "CNPJ inválido.")
+    .transform((v) => (v === "" ? null : v)),
+);
 
 /** Número em formato brasileiro ("1.234,56") ou internacional. */
 export const decimalSchema = z
@@ -68,6 +79,19 @@ export const tenantSettingsSchema = z.object({
   ),
 });
 
+export const tenantDomainSchema = z.object({
+  emailDomain: fromForm(
+    z
+      .string()
+      .trim()
+      .min(1, "Informe o domínio corporativo.")
+      .transform((v) => normalizeDomain(v))
+      .refine((v) => isValidDomain(v), "Domínio inválido. Use o formato suaempresa.com.br.")
+      .refine((v) => !isPublicEmailDomain(v), "Use um domínio corporativo, não um provedor de e-mail pessoal."),
+  ),
+  autoJoinDomain: checkboxSchema,
+});
+
 export const inviteSchema = z.object({
   email: emailSchema,
   fullName: nameSchema,
@@ -77,33 +101,39 @@ export const inviteSchema = z.object({
 
 /** Campo de texto opcional: vazio vira null. */
 export const optionalText = (max = 150) =>
+  fromForm(
+    z
+      .string()
+      .trim()
+      .max(max, `Máximo de ${max} caracteres.`)
+      .transform((v) => (v === "" ? null : v)),
+  );
+
+export const optionalEmailSchema = fromForm(
   z
     .string()
     .trim()
-    .max(max, `Máximo de ${max} caracteres.`)
-    .transform((v) => (v === "" ? null : v));
-
-export const optionalEmailSchema = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .transform((v) => (v === "" ? null : v))
-  .refine((v) => v === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v), "Informe um e-mail válido.");
+    .toLowerCase()
+    .transform((v) => (v === "" ? null : v))
+    .refine((v) => v === null || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v), "Informe um e-mail válido."),
+);
 
 /** Número opcional (ex.: horas do colaborador quando difere do padrão). */
-export const optionalDecimalSchema = z
-  .string()
-  .trim()
-  .transform((v, ctx) => {
-    if (v === "") return null;
-    const normalized = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : v;
-    const n = Number(normalized);
-    if (!Number.isFinite(n)) {
-      ctx.addIssue({ code: "custom", message: "Número inválido." });
-      return z.NEVER;
-    }
-    return n;
-  });
+export const optionalDecimalSchema = fromForm(
+  z
+    .string()
+    .trim()
+    .transform((v, ctx) => {
+      if (v === "") return null;
+      const normalized = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : v;
+      const n = Number(normalized);
+      if (!Number.isFinite(n)) {
+        ctx.addIssue({ code: "custom", message: "Número inválido." });
+        return z.NEVER;
+      }
+      return n;
+    }),
+);
 
 export const dateSchema = z
   .string()
@@ -173,11 +203,13 @@ export const expenseRecurrenceSchema = z.enum([
   "anual",
 ]);
 
-const optionalDateSchema = z
-  .string()
-  .trim()
-  .transform((v) => (v === "" ? null : v))
-  .refine((v) => v === null || /^\d{4}-\d{2}-\d{2}$/.test(v), "Informe uma data válida.");
+const optionalDateSchema = fromForm(
+  z
+    .string()
+    .trim()
+    .transform((v) => (v === "" ? null : v))
+    .refine((v) => v === null || /^\d{4}-\d{2}-\d{2}$/.test(v), "Informe uma data válida."),
+);
 
 export const contractSchema = z
   .object({
@@ -225,11 +257,13 @@ export const expenseSchema = z
     path: ["endDate"],
   });
 
-const optionalTimeSchema = z
-  .string()
-  .trim()
-  .transform((v) => (v === "" ? null : v))
-  .refine((v) => v === null || /^\d{2}:\d{2}(:\d{2})?$/.test(v), "Informe um horário válido.");
+const optionalTimeSchema = fromForm(
+  z
+    .string()
+    .trim()
+    .transform((v) => (v === "" ? null : v))
+    .refine((v) => v === null || /^\d{2}:\d{2}(:\d{2})?$/.test(v), "Informe um horário válido."),
+);
 
 export const timeEntrySchema = z
   .object({
@@ -242,7 +276,7 @@ export const timeEntrySchema = z
     entryDate: dateSchema,
     startTime: optionalTimeSchema,
     endTime: optionalTimeSchema,
-    duration: z.string().trim(),
+    duration: fromForm(z.string().trim()),
     description: optionalText(500),
   })
   .refine((d) => (d.startTime === null) === (d.endTime === null), {

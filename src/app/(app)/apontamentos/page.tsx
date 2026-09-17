@@ -1,12 +1,11 @@
 import { PageHeader } from "@/components/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireContext } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { todayISO } from "@/lib/format";
 import { startOfWeek, weekDays } from "@/lib/time";
 import type { Tables } from "@/lib/database.types";
-import { EntryForm } from "./entry-form";
-import { TimerCard } from "./timer-card";
+import { EntryModes } from "./entry-modes";
 import { WeekEntries } from "./week-entries";
 
 export const metadata = { title: "Apontamentos | Apontamento" };
@@ -75,20 +74,12 @@ export default async function TimeEntriesPage({ searchParams }: PageProps<"/apon
         description="Lance suas horas por cliente, contrato e atividade. Enquanto estiverem pendentes, você pode editar."
       />
 
-      <TimerCard contracts={contractOptions} activities={activityOptions} today={today} />
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Lançamento manual</CardTitle>
-          <CardDescription>
-            Informe a duração (1:30, 1,5 ou 90m) ou o intervalo de horas.
-            {lockedThrough ? " Períodos fechados aparecem bloqueados." : ""}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <EntryForm contracts={contractOptions} activities={activityOptions} today={today} />
-        </CardContent>
-      </Card>
+      <EntryModes
+        contracts={contractOptions}
+        activities={activityOptions}
+        today={today}
+        lockedThrough={lockedThrough}
+      />
 
       <WeekEntries
         weekStart={weekStart}
