@@ -12,7 +12,15 @@ import { loginAction } from "../actions";
 
 function LoginForm() {
   const [state, formAction] = useActionState(loginAction, initialActionState);
-  const next = useSearchParams().get("next") ?? "";
+  const params = useSearchParams();
+  const next = params.get("next") ?? "";
+
+  // Mensagem vinda de um link de e-mail que não pôde ser usado
+  const erro = params.get("erro");
+  const aviso =
+    erro === "link-invalido"
+      ? "O link do e-mail é inválido ou já foi usado. Peça um novo ao administrador."
+      : erro;
 
   return (
     <Card>
@@ -23,7 +31,7 @@ function LoginForm() {
       <CardContent>
         <form action={formAction} className="grid gap-4">
           <input type="hidden" name="next" value={next} />
-          <FormAlert state={state} />
+          <FormAlert state={aviso && !state.error ? { ...state, error: aviso } : state} />
           <Field label="E-mail" htmlFor="email" errors={state.fieldErrors?.email}>
             <Input id="email" name="email" type="email" autoComplete="email" required placeholder="voce@empresa.com.br" />
           </Field>
