@@ -1,9 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getOrigin } from "@/lib/server/origin";
+import { isExistingAccount } from "@/lib/auth/signup";
 import { translateError } from "@/lib/auth/errors";
 import { parseForm, type ActionState } from "@/lib/actions";
 import { emailSchema, loginSchema, signupSchema } from "@/lib/validation/schemas";
@@ -14,12 +15,6 @@ function safeNext(next: FormDataEntryValue | null): string {
   return value.startsWith("/") && !value.startsWith("//") ? value : "/inicio";
 }
 
-async function getOrigin() {
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-  const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${proto}://${host}`;
-}
 
 export async function loginAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = parseForm(loginSchema, formData);
@@ -51,6 +46,17 @@ export async function signupAction(_prev: ActionState, formData: FormData): Prom
     revalidatePath("/", "layout");
     redirect("/onboarding");
   }
+
+  // Para não revelar quem tem conta, o Supabase devolve "sucesso" com a lista
+  // de identidades vazia quando o e-mail já existe — e não envia e-mail algum.
+  // Antes de avisar que enviamos, conferimos.
+  if (isExistingAccount(data.user)) {
+    return {
+      error:
+        "Já existe uma conta com este e-mail. Se o administrador te convidou, abra o link do convite; se você já tem senha, entre normalmente ou use \"Esqueci minha senha\".",
+    };
+  }
+
   return { success: "Conta criada! Enviamos um link de confirmação para o seu e-mail." };
 }
 

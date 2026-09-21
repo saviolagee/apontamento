@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { NativeCheckbox, NativeSelect } from "@/components/native-select";
+import { CopyLink } from "@/components/copy-link";
 import { Field, FormAlert, SubmitButton } from "@/components/form";
 import { initialActionState } from "@/lib/actions";
 import type { AppRole } from "@/lib/database.types";
@@ -47,6 +48,8 @@ export function InviteForm() {
       <div>
         <SubmitButton>Enviar convite</SubmitButton>
       </div>
+
+      {state.link ? <CopyLink link={state.link} /> : null}
     </form>
   );
 }

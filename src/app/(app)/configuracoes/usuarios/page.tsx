@@ -31,7 +31,8 @@ export default async function UsersPage() {
         <CardHeader>
           <CardTitle>Convidar pessoa</CardTitle>
           <CardDescription>
-            A pessoa recebe um e-mail para criar a senha e já entra na empresa com o perfil escolhido.
+            Tentamos enviar por e-mail e sempre geramos um link para você copiar — o envio automático do Supabase é
+            limitado a poucas mensagens por hora. Quem abrir o link cria a senha e já entra com o perfil escolhido.
           </CardDescription>
         </CardHeader>
         <CardContent>

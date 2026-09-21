@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth/session";
 import { translateError } from "@/lib/auth/errors";
+import { createAccessLink } from "@/lib/server/access-link";
+import { getOrigin } from "@/lib/server/origin";
 import { parseForm, type ActionState } from "@/lib/actions";
 import { employeeCostSchema, employeeSchema, roleSchema } from "@/lib/validation/schemas";
 
@@ -134,17 +136,31 @@ export async function grantAccessAction(_prev: ActionState, formData: FormData):
 
   revalidatePath(`/colaboradores/${parsed.data.employeeId}`);
 
+  // O e-mail automático é só uma tentativa; o link copiável é o que garante.
+  let emailEnviado = false;
   try {
     const admin = createAdminClient();
     const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(parsed.data.email);
-    if (inviteError) {
-      return {
-        success: `Convite registrado. Não foi possível enviar o e-mail (${translateError(inviteError)}); peça para a pessoa se cadastrar com ${parsed.data.email}.`,
-      };
-    }
+    emailEnviado = !inviteError;
   } catch {
-    return { success: `Convite registrado. Peça para a pessoa se cadastrar com ${parsed.data.email}.` };
+    emailEnviado = false;
   }
 
-  return { success: `Convite enviado para ${parsed.data.email}.` };
+  const origin = await getOrigin();
+  const gerado = await createAccessLink(parsed.data.email, origin);
+
+  if ("error" in gerado) {
+    return {
+      success: emailEnviado
+        ? `Convite enviado para ${parsed.data.email}.`
+        : `Convite registrado, mas não foi possível enviar o e-mail nem gerar o link (${gerado.error}).`,
+    };
+  }
+
+  return {
+    success: emailEnviado
+      ? `Convite enviado para ${parsed.data.email}. Se o e-mail não chegar, use o link abaixo.`
+      : `Convite criado para ${parsed.data.email}. O e-mail automático não saiu — envie o link abaixo.`,
+    link: gerado.link,
+  };
 }

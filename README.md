@@ -31,8 +31,17 @@ Recharts · Zod · Vitest (com Postgres real via PGlite para testar as política
    ```
 5. Acesse `/cadastro`, crie a conta do dono e siga para o onboarding (criação da empresa).
 
-> Em **Authentication → URL Configuration**, inclua `http://localhost:3000/auth/confirm` (e a URL de produção)
-> nas *Redirect URLs*.
+> Em **Authentication → URL Configuration**, defina o *Site URL* com o endereço de produção e inclua
+> `http://localhost:3000/**` e `https://SEU-APP.vercel.app/**` nas *Redirect URLs*. Sem isso, os links de
+> convite e de recuperação voltam para o endereço errado.
+
+### Sobre o envio de e-mails
+
+O serviço de e-mail embutido do Supabase é limitado a poucas mensagens por hora e **não deve ser usado em
+produção**. Por isso o convite nunca depende dele: ao convidar alguém, a tela mostra um **link de acesso
+copiável** (também disponível em *Usuários e acessos → Link de acesso*, por membro) para enviar por WhatsApp,
+Teams ou o canal que preferir. Para e-mails confiáveis, configure um SMTP próprio em
+*Project Settings → Authentication → SMTP Settings* (Resend, Brevo, SendGrid etc.).
 
 ## Scripts
 

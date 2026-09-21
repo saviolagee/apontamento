@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { NativeCheckbox, NativeSelect } from "@/components/native-select";
 import { EmptyState } from "@/components/page-header";
+import { CopyLink } from "@/components/copy-link";
 import { Field, FormAlert, SubmitButton } from "@/components/form";
 import { initialActionState } from "@/lib/actions";
 import { formatCurrency, formatDate, formatHours } from "@/lib/format";
@@ -203,6 +204,8 @@ export function GrantAccessForm({ employee }: { employee: Tables<"employees"> })
         </Field>
         <SubmitButton>Enviar convite</SubmitButton>
       </div>
+
+      {state.link ? <CopyLink link={state.link} /> : null}
     </form>
   );
 }

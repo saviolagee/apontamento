@@ -2,14 +2,17 @@
 
 import { useActionState, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { LinkIcon } from "lucide-react";
 import { NativeCheckbox, NativeSelect } from "@/components/native-select";
+import { CopyLink } from "@/components/copy-link";
 import { FormAlert, SubmitButton } from "@/components/form";
 import { initialActionState } from "@/lib/actions";
 import type { AppRole, Tables } from "@/lib/database.types";
-import { updateMemberAction } from "./actions";
+import { accessLinkAction, updateMemberAction } from "./actions";
 
 function MemberRow({ member, isCurrentUser }: { member: Tables<"profiles">; isCurrentUser: boolean }) {
   const [state, formAction] = useActionState(updateMemberAction, initialActionState);
+  const [linkState, linkAction] = useActionState(accessLinkAction, initialActionState);
   const [role, setRole] = useState<AppRole>(member.role);
 
   return (
@@ -61,6 +64,24 @@ function MemberRow({ member, isCurrentUser }: { member: Tables<"profiles">; isCu
           <SubmitButton size="sm" variant="outline">
             Salvar
           </SubmitButton>
+        </form>
+
+        {/* Serve para quem ainda não criou a senha e para quem a esqueceu */}
+        <form action={linkAction} className="px-3 pb-2">
+          <input type="hidden" name="email" value={member.email} />
+          <SubmitButton size="xs" variant="ghost">
+            <LinkIcon />
+            Link de acesso
+          </SubmitButton>
+          {linkState.error ? <p className="mt-1 text-xs text-destructive">{linkState.error}</p> : null}
+          {linkState.link ? (
+            <div className="mt-2 max-w-xl">
+              <CopyLink
+                link={linkState.link}
+                hint={`Mande para ${member.full_name} criar ou trocar a senha sem depender de e-mail.`}
+              />
+            </div>
+          ) : null}
         </form>
       </TableCell>
     </TableRow>

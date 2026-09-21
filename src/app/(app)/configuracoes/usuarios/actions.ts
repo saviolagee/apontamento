@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth/session";
 import { translateError } from "@/lib/auth/errors";
+import { createAccessLink } from "@/lib/server/access-link";
+import { getOrigin } from "@/lib/server/origin";
 import { parseForm, type ActionState } from "@/lib/actions";
 import { inviteSchema, updateMemberSchema } from "@/lib/validation/schemas";
 
@@ -30,23 +32,48 @@ export async function inviteMemberAction(_prev: ActionState, formData: FormData)
 
   revalidatePath("/configuracoes/usuarios");
 
-  // Envio do e-mail de convite (Auth Admin). Se falhar, o convite continua
-  // válido: a pessoa se cadastra com o mesmo e-mail e entra na empresa.
+  // Tenta o e-mail automático, mas nunca depende dele: o envio nativo do
+  // Supabase é limitado a poucas mensagens por hora e costuma falhar em
+  // produção. O link copiável abaixo é o caminho garantido.
+  let emailEnviado = false;
   try {
     const admin = createAdminClient();
     const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(parsed.data.email);
-    if (inviteError) {
-      return {
-        success: `Convite registrado para ${parsed.data.email}. Não foi possível enviar o e-mail automático (${translateError(inviteError)}); peça para a pessoa se cadastrar com este e-mail.`,
-      };
-    }
+    emailEnviado = !inviteError;
   } catch {
+    emailEnviado = false;
+  }
+
+  const origin = await getOrigin();
+  const gerado = await createAccessLink(parsed.data.email, origin);
+
+  if ("error" in gerado) {
     return {
-      success: `Convite registrado para ${parsed.data.email}. Configure SUPABASE_SERVICE_ROLE_KEY para enviar o e-mail automaticamente.`,
+      success: emailEnviado
+        ? `Convite enviado por e-mail para ${parsed.data.email}.`
+        : `Convite registrado para ${parsed.data.email}, mas não foi possível enviar o e-mail nem gerar o link (${gerado.error}).`,
     };
   }
 
-  return { success: `Convite enviado para ${parsed.data.email}.` };
+  return {
+    success: emailEnviado
+      ? `Convite enviado para ${parsed.data.email}. Se o e-mail não chegar, use o link abaixo.`
+      : `Convite criado para ${parsed.data.email}. O e-mail automático não saiu — envie o link abaixo.`,
+    link: gerado.link,
+  };
+}
+
+/** Gera de novo o link de acesso de um convite pendente. */
+export async function accessLinkAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireRole(["admin"]);
+  const parsed = parseForm(z.object({ email: z.email() }), formData);
+  if (!parsed.ok) return parsed.state;
+
+  const origin = await getOrigin();
+  const gerado = await createAccessLink(parsed.data.email, origin);
+  if ("error" in gerado) return { error: gerado.error };
+
+  return { success: `Link de acesso para ${parsed.data.email}:`, link: gerado.link };
 }
 
 export async function cancelInvitationAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

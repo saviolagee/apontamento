@@ -4,6 +4,8 @@ export type ActionState = {
   error?: string;
   success?: string;
   fieldErrors?: Record<string, string[]>;
+  /** Link de acesso gerado para entregar por fora do e-mail. */
+  link?: string;
 };
 
 export const initialActionState: ActionState = {};
