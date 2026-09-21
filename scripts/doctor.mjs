@@ -6,12 +6,17 @@
  */
 import pg from "pg";
 
-const required = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_DB_URL"];
+const required = ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_DB_URL"];
 
 console.log("Variáveis de ambiente");
 for (const name of required) {
   console.log(`  ${process.env[name] ? "ok  " : "FALTA"} ${name}`);
 }
+// A chave pública aceita dois nomes
+const anonName = ["NEXT_PUBLIC_SUPABASE_ANON_KEY", "NEXT_PUBLIC_SUPABASE_ANON"].find((n) => process.env[n]);
+console.log(
+  `  ${anonName ? "ok  " : "FALTA"} ${anonName ?? "NEXT_PUBLIC_SUPABASE_ANON_KEY (ou NEXT_PUBLIC_SUPABASE_ANON)"}`,
+);
 
 if (!process.env.SUPABASE_DB_URL) {
   console.log("\nSem SUPABASE_DB_URL não dá para checar o banco.");

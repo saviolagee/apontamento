@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/lib/database.types";
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from "./env";
 
 const PUBLIC_PATHS = ["/login", "/cadastro", "/esqueci-senha", "/auth"];
 
@@ -13,15 +14,15 @@ export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   // Sem variáveis configuradas: mostra a página de instruções em vez de quebrar.
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     return request.nextUrl.pathname === "/configuracao-necessaria"
       ? response
       : NextResponse.rewrite(new URL("/configuracao-necessaria", request.url));
   }
 
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
