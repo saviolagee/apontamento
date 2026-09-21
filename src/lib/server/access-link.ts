@@ -24,14 +24,24 @@ export async function createAccessLink(
 
   // "invite" cria a conta; se ela já existir, "recovery" serve ao mesmo fim
   const convite = await admin.auth.admin.generateLink({ type: "invite", email, options });
-  if (!convite.error && convite.data.properties?.action_link) {
-    return { link: convite.data.properties.action_link };
+  if (!convite.error && convite.data.properties?.hashed_token) {
+    return { link: appLink(origin, convite.data.properties.hashed_token, "invite") };
   }
 
   const recuperacao = await admin.auth.admin.generateLink({ type: "recovery", email, options });
-  if (!recuperacao.error && recuperacao.data.properties?.action_link) {
-    return { link: recuperacao.data.properties.action_link };
+  if (!recuperacao.error && recuperacao.data.properties?.hashed_token) {
+    return { link: appLink(origin, recuperacao.data.properties.hashed_token, "recovery") };
   }
 
   return { error: translateError(recuperacao.error ?? convite.error) };
+}
+
+/**
+ * Aponta para a nossa própria rota de confirmação em vez do endereço do
+ * Supabase. Assim o link não passa pela lista de redirecionamentos do projeto
+ * — que, mal configurada, devolveria a pessoa para o localhost.
+ */
+function appLink(origin: string, hashedToken: string, type: "invite" | "recovery"): string {
+  const destino = encodeURIComponent("/redefinir-senha?convite=1");
+  return `${origin}/auth/confirm?token_hash=${hashedToken}&type=${type}&next=${destino}`;
 }
