@@ -75,7 +75,7 @@ export const tenantSettingsSchema = z.object({
   cnpj: optionalCnpjSchema,
   monthlyHours: decimalSchema.pipe(z.number().gt(0, "Deve ser maior que zero.").max(744, "Máximo de 744 horas.")),
   marginAttentionTolerance: decimalSchema.pipe(
-    z.number().min(0, "Não pode ser negativo.").max(100, "Máximo de 100 p.p."),
+    z.number().min(0, "Não pode ser negativo.").max(100, "Máximo de 100 pontos percentuais."),
   ),
 });
 

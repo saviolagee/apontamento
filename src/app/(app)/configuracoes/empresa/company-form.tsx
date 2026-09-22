@@ -95,9 +95,9 @@ export function CompanyForm({ tenant }: { tenant: Tables<"tenants"> }) {
             />
           </Field>
           <Field
-            label="Tolerância da faixa de atenção (p.p.)"
+            label="Tolerância da faixa de atenção (pontos percentuais)"
             htmlFor="marginAttentionTolerance"
-            hint="🟢 margem ≥ meta · 🟡 abaixo da meta até esta tolerância · 🔴 abaixo disso ou prejuízo."
+            hint="Quantos pontos a margem real pode ficar abaixo da meta antes de virar crítico. Ex.: meta de 30% com tolerância de 10 vira 🟡 Atenção até 20% e 🔴 Crítico abaixo disso. 🟢 Saudável é margem igual ou acima da meta."
             errors={state.fieldErrors?.marginAttentionTolerance}
           >
             <Input

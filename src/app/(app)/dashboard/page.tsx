@@ -482,8 +482,9 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Status: 🟢 {HEALTH_LABELS.saudavel} (margem ≥ meta) · 🟡 {HEALTH_LABELS.atencao} (até {report.tolerance} p.p.
-        abaixo) · 🔴 {HEALTH_LABELS.critico} (abaixo disso ou prejuízo). Ajuste a tolerância em Configurações → Empresa.
+        Status: 🟢 {HEALTH_LABELS.saudavel} (margem real igual ou acima da meta) · 🟡 {HEALTH_LABELS.atencao} (até{" "}
+        {report.tolerance} pontos percentuais abaixo da meta) · 🔴 {HEALTH_LABELS.critico} (mais do que isso abaixo, ou
+        prejuízo). Ajuste esse limite em Configurações → Empresa.
       </p>
     </div>
   );

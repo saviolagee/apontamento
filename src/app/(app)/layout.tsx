@@ -1,6 +1,7 @@
 import { ClockIcon } from "lucide-react";
 import { AppNav } from "@/components/app-nav";
 import { SignOutButton } from "@/components/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { requireContext, ROLE_LABELS } from "@/lib/auth/session";
 
@@ -32,6 +33,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
               {ROLE_LABELS[profile.role]}
             </Badge>
           </div>
+          <ThemeToggle />
           <SignOutButton />
         </div>
       </aside>
