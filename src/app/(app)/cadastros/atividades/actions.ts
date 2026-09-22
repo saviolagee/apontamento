@@ -53,3 +53,21 @@ export async function updateActivityAction(_prev: ActionState, formData: FormDat
   revalidatePath("/cadastros/atividades");
   return { success: "Atividade atualizada." };
 }
+
+export async function deleteActivityAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireRole(["admin", "gestor"]);
+  const parsed = parseForm(z.object({ id: z.uuid() }), formData);
+  if (!parsed.ok) return parsed.state;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("activities").delete().eq("id", parsed.data.id);
+  if (error) {
+    if (error.code === "23503") {
+      return { error: "Esta atividade já tem apontamentos registrados. Desative-a em vez de excluir." };
+    }
+    return { error: translateError(error) };
+  }
+
+  revalidatePath("/cadastros/atividades");
+  return { success: "Atividade excluída." };
+}

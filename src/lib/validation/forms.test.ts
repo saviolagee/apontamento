@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseForm } from "@/lib/actions";
-import { clientSchema, employeeSchema, expenseSchema, timeEntrySchema } from "./schemas";
+import { activitySchema, clientSchema, employeeSchema, expenseSchema, timeEntrySchema } from "./schemas";
 
 /**
  * Regressão: formulários enviam só os campos que estão na tela. Campos
@@ -72,6 +72,18 @@ describe("formulários com campos ausentes", () => {
     );
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.data.endDate).toBeNull();
+  });
+
+  it("atividade exige uma área de atuação real", () => {
+    const semArea = parseForm(activitySchema, form({ name: "Apuração", areaId: "", billable: "on" }));
+    expect(semArea.ok).toBe(false);
+    if (!semArea.ok) expect(semArea.state.fieldErrors?.areaId).toBeDefined();
+
+    const comArea = parseForm(
+      activitySchema,
+      form({ name: "Apuração", areaId: "0b5f2b3a-3f4a-4c56-9f0e-2b6f1a2c3d4e", billable: "on" }),
+    );
+    expect(comArea.ok).toBe(true);
   });
 
   it("continua reclamando do que é realmente obrigatório", () => {

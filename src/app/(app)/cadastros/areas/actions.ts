@@ -47,3 +47,23 @@ export async function updateAreaAction(_prev: ActionState, formData: FormData): 
   revalidatePath("/cadastros/areas");
   return { success: "Área atualizada." };
 }
+
+export async function deleteAreaAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireRole(["admin", "gestor"]);
+  const parsed = parseForm(z.object({ id: z.uuid() }), formData);
+  if (!parsed.ok) return parsed.state;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("areas").delete().eq("id", parsed.data.id);
+  if (error) {
+    if (error.code === "23503") {
+      return {
+        error: "Esta área tem atividades vinculadas. Mova ou exclua as atividades antes, ou desative a área.",
+      };
+    }
+    return { error: translateError(error) };
+  }
+
+  revalidatePath("/cadastros/areas");
+  return { success: "Área excluída." };
+}

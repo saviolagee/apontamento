@@ -148,11 +148,7 @@ export const areaSchema = z.object({
 
 export const activitySchema = z.object({
   name: nameSchema.max(100, "Máximo de 100 caracteres."),
-  areaId: z
-    .string()
-    .trim()
-    .transform((v) => (v === "" ? null : v))
-    .refine((v) => v === null || z.uuid().safeParse(v).success, "Área inválida."),
+  areaId: z.uuid("Escolha uma área de atuação."),
   billable: checkboxSchema,
   active: checkboxSchema,
 });

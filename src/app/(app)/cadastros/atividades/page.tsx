@@ -13,7 +13,7 @@ export default async function ActivitiesPage() {
   const supabase = await createClient();
 
   const [{ data: activities }, { data: areas }] = await Promise.all([
-    supabase.from("activities").select("*").order("name"),
+    supabase.from("activities").select("*, time_entries(count)").order("name"),
     supabase.from("areas").select("id, name, active").order("name"),
   ]);
 
@@ -56,7 +56,10 @@ export default async function ActivitiesPage() {
           <CardTitle>Atividades cadastradas</CardTitle>
         </CardHeader>
         <CardContent>
-          <ActivitiesTable activities={(activities ?? []) as Tables<"activities">[]} areas={areaOptions} />
+          <ActivitiesTable
+            activities={(activities ?? []) as (Tables<"activities"> & { time_entries: { count: number }[] })[]}
+            areas={areaOptions}
+          />
         </CardContent>
       </Card>
     </div>

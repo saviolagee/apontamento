@@ -108,15 +108,15 @@ export type Database = {
         Row: {
           id: string;
           tenant_id: string;
-          area_id: string | null;
+          area_id: string;
           name: string;
           billable: boolean;
           active: boolean;
           created_at: string;
           updated_at: string;
         };
-        Insert: { tenant_id: string; area_id?: string | null; name: string; billable?: boolean; active?: boolean };
-        Update: { area_id?: string | null; name?: string; billable?: boolean; active?: boolean };
+        Insert: { tenant_id: string; area_id: string; name: string; billable?: boolean; active?: boolean };
+        Update: { area_id?: string; name?: string; billable?: boolean; active?: boolean };
         Relationships: [
           {
             foreignKeyName: "activities_area_id_fkey";

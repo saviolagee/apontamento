@@ -90,3 +90,21 @@ export async function setClientAreasAction(_prev: ActionState, formData: FormDat
   revalidatePath(`/clientes/${clientId.data}`);
   return { success: "Áreas atualizadas." };
 }
+
+export async function deleteClientAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireRole(["admin", "gestor"]);
+  const parsed = parseForm(z.object({ id: z.uuid() }), formData);
+  if (!parsed.ok) return parsed.state;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("clients").delete().eq("id", parsed.data.id);
+  if (error) {
+    if (error.code === "23503") {
+      return { error: "Este cliente tem contratos cadastrados. Desative o cliente em vez de excluir." };
+    }
+    return { error: translateError(error) };
+  }
+
+  revalidatePath("/clientes");
+  return { success: "Cliente excluído." };
+}
